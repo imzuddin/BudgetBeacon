@@ -14,3 +14,10 @@ services:
       - ./api/code:/code
     command: ["fastapi", "run", "main.py", "--port", "8000"]
 
+  postgres:
+    container_name: postgres
+    image: postgres:17.1
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
