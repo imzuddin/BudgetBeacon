@@ -35,12 +35,12 @@ class BudgetBeaconDatabase:
             # Run a dummy query
             session_local.execute(sqlalchemy.text("SELECT 1"))
             self.logger.info(
-                "[green] ✅ Database connection [bold]Successful![/bold][/]"
+                "[green] ✅ - Database connection [bold]Successful![/bold][/]"
             )
             return True
         except SQLAlchemyError as e:
             self.logger.error(
-                f"[red] ❌ Database connection [bold]Failed[/bold]: {e}[/]"
+                f"[red] ❌ - Database connection [bold]Failed[/bold]: {e}[/]"
             )
             return False
         finally:
@@ -48,11 +48,11 @@ class BudgetBeaconDatabase:
 
     def create_tables(self) -> bool:
         Base.metadata.create_all(self.engine)
-        self.logger.info("[bold green]✅ All tables created successfully![/]")
+        self.logger.info("[green]✅ - Table creation [bold] Successful! [/bold][/]")
 
     def delete_tables(self) -> bool:
         Base.metadata.drop_all(self.engine)
-        self.logger.warning("[bold red]⚠️ All tables dropped![/]")
+        self.logger.warning("[red]⚠️ - All tables [bold] Dropped! [/bold]![/]")
 
 
 if __name__ == "__main__":
