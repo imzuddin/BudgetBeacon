@@ -1,3 +1,7 @@
 .venv
+.database_venv
 .vscode
 .env
+**/__pycache__/
+*.pyc
+

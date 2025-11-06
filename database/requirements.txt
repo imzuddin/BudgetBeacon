@@ -1,0 +1,2 @@
+psycopg2-binary
+typing_extensions==4.15.0
