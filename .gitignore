@@ -1,7 +1,9 @@
 .venv
 .database_venv
 .vscode
-.env
+*.env
+/secrets/*
+/pgadmin/*
 **/__pycache__/
 *.pyc
 

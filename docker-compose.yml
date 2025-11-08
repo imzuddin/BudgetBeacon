@@ -12,22 +12,37 @@ services:
         image: postgres 
         restart: always
         shm_size: 128mb 
+        secrets:
+            - postgres_password
         volumes:
-            - pgdata:/var/lib/postgresql/data
+            - pgdata:/var/lib/postgresql
+        env_file:
+            - postgress.env
         environment:
-            POSTGRES_USER: temp
-            POSTGRES_PASSWORD: temp 
+            POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
         ports:
             - 5432:5432
 
     pgadmin:
         image: dpage/pgadmin4:latest
         restart: always 
-        environment:
-            PGADMIN_DEFAULT_EMAIL: 'temp@temp.com'
-            PGADMIN_DEFAULT_PASSWORD: temp
+        secrets:
+            - pgpass
+        volumes:
+            - ./pgadmin/servers.json:/pgadmin4/servers.json:ro
+            - pgadmindata:/var/lib/pgadmin
+        env_file:
+            - pgadmin.env
         ports:
             - 8080:80
 
 volumes:
     pgdata:
+    pgadmindata:
+
+secrets:
+    postgres_password:
+        file: ./secrets/postgres_password.txt
+    pgpass:
+        file: ./secrets/pgpass
+
