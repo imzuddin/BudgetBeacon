@@ -1,4 +1,14 @@
 services:
+  api-service: 
+    build: 
+      context: ../api
+      dockerfile: ../api/Dockerfile.api 
+    container_name: api-service
+    env_file:
+      - .env 
+    ports:
+      - "${API_PORT}:8000"
+
   db-service:
     image: postgres:latest
     container_name: db-service
