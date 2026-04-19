@@ -1,13 +1,16 @@
 services:
   api-service: 
     build: 
-      context: ../api
-      dockerfile: ../api/Dockerfile.api 
+      context: ..
+      dockerfile: api/Dockerfile.api
     container_name: api-service
     env_file:
-      - .env 
+      - ../config/.env 
     ports:
       - "${API_PORT}:8000"
+    volumes:
+      - ../api:/fastapi
+      - ../config/settings.py:/fastapi/settings.py
 
   db-service:
     image: postgres:latest
