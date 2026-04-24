@@ -9,8 +9,8 @@ services:
     ports:
       - "${API_PORT}:8000"
     volumes:
-      - ../api:/fastapi
-      - ../config/settings.py:/fastapi/settings.py
+      - ../api:/fastapi/api
+      - ../config:/fastapi/config
 
   db-service:
     image: postgres:latest
