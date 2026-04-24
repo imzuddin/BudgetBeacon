@@ -1,6 +1,6 @@
 from fastapi import FastAPI 
-from routers import health, users
-from settings import settings
+from api.routers import health, users
+from config.settings import settings
 
 app = FastAPI(
     title=settings.api_name,

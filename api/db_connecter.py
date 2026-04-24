@@ -3,7 +3,9 @@ from collections.abc import Generator
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
-from settings import settings
+from config.settings import settings
+
+import api.models #noqa: F401
 
 class Base(DeclarativeBase):
     pass 

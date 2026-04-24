@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-import db_connecter
+from api import db_connecter
 
 health_router = APIRouter()
 
