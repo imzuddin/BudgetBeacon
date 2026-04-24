@@ -5,10 +5,12 @@ from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
 from config.settings import settings
 
-import api.models #noqa: F401
 
 class Base(DeclarativeBase):
     pass 
+
+
+import api.models #noqa: F401, E402
 
 db_engine = create_engine(
     settings.database_url,
