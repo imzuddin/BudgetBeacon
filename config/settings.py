@@ -15,6 +15,11 @@ class Settings(BaseSettings):
     postgres_db: str
     postgres_user: str
     postgres_password: str 
+    pepper_string: str
+    jwt_secret_key: str
+    jwt_algorithm: str
+    access_token_expires_minutes: int
+    refresh_token_expires_days: int
 
     model_config = SettingsConfigDict(
         env_file=ENV_FILE,

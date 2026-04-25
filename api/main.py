@@ -1,5 +1,5 @@
 from fastapi import FastAPI 
-from api.routers import health, users
+from api.routers import health, users, auth
 from config.settings import settings
 
 app = FastAPI(
@@ -9,3 +9,4 @@ app = FastAPI(
 
 app.include_router(health.health_router)
 app.include_router(users.users_router)
+app.include_router(auth.auth_router)
