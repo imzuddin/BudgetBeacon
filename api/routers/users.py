@@ -5,6 +5,7 @@ from sqlalchemy import select
 from api.models.user import User 
 from api.schemas.users import UserCreate, UserRead
 from api.db_connecter import get_db
+from api.authenticator import hash_password
 
 
 users_router = APIRouter()
@@ -30,7 +31,7 @@ def create_user(user_input: UserCreate, db: Session = Depends(get_db)):
         first_name = user_input.first_name,
         last_name = user_input.last_name,
         username = user_input.username,
-        password_hash = user_input.password #hash_password(user_input.password),
+        password_hash = user_input.hash_password(user_input.password),
     )
 
     db.add(user)
