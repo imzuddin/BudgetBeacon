@@ -1,0 +1,2 @@
+[tool.isort]
+extend_skip = [".venv", "venv", "api/.fastapi.venv"]
