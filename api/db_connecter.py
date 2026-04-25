@@ -7,10 +7,10 @@ from config.settings import settings
 
 
 class Base(DeclarativeBase):
-    pass 
+    pass
 
 
-import api.models #noqa: F401, E402
+import api.models  # noqa: F401, E402
 
 db_engine = create_engine(
     settings.database_url,
@@ -20,9 +20,10 @@ db_engine = create_engine(
 SessionLocal = sessionmaker(
     bind=db_engine,
     autoflush=False,
-    autocommit=False, 
+    autocommit=False,
     class_=Session,
 )
+
 
 def get_db() -> Generator[Session, None, None]:
     db = SessionLocal()

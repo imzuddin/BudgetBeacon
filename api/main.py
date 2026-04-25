@@ -1,4 +1,4 @@
-from fastapi import FastAPI 
+from fastapi import FastAPI
 from api.routers import health, users, auth
 from config.settings import settings
 

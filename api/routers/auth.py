@@ -1,32 +1,42 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import select 
+from sqlalchemy import select
 
-from api.models.user import User 
+from api.models.user import User
 from api.schemas.users import UserRead
 from api.schemas.auth import AccessToken
 from api.db_connecter import get_db
-from api.authenticator import hash_password, verify_password, verify_refresh_token, create_access_token, create_refresh_token
-
+from api.authenticator import (
+    hash_password,
+    verify_password,
+    verify_refresh_token,
+    create_access_token,
+    create_refresh_token,
+)
 
 auth_router = APIRouter()
+
 
 @auth_router.post("auth/login")
 def login(username: str, password: str, db: Session = Depends(get_db)):
     user = db.scalar(select(User).where(User.name == username))
 
-    if user is None and (user.password is None or verify_password(password, user.password)):
+    if user is None and (
+        user.password is None or verify_password(password, user.password)
+    ):
         raise HTTPException(status_code=401, detail="Username or Password is Incorrect")
-    
+
     return AccessToken(
         access_token=create_access_token(user.id),
         refresh_token=create_refresh_token(user.id),
         token_type="bearer",
     )
 
+
 @auth_router.post("auth/logout")
 def logout():
-    pass 
+    pass
+
 
 @auth_router.post("auth/refresh")
 def refresh(refresh_token: str, db: Session = Depends(get_db)):
@@ -36,7 +46,7 @@ def refresh(refresh_token: str, db: Session = Depends(get_db)):
 
     if user is None:
         raise HTTPException(status_code=401, detail="Invalid Refresh Token")
-    
+
     return AccessToken(
         access_token=create_access_token(user.id),
         refresh_token=create_refresh_token(user.id),
