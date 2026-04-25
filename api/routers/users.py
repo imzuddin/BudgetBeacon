@@ -33,7 +33,7 @@ def create_user(user_input: UserCreate, db: Session = Depends(get_db)):
         first_name=user_input.first_name,
         last_name=user_input.last_name,
         username=user_input.username,
-        password_hash=user_input.hash_password(user_input.password),
+        password_hash=hash_password(user_input.password),
     )
 
     db.add(user)

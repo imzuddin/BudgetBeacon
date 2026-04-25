@@ -13,9 +13,9 @@ from api.schemas.users import UserRead
 auth_router = APIRouter()
 
 
-@auth_router.post("auth/login")
+@auth_router.post("/auth/login")
 def login(username: str, password: str, db: Session = Depends(get_db)):
-    user = db.scalar(select(User).where(User.name == username))
+    user = db.scalar(select(User).where(User.username == username))
 
     if user is None and (
         user.password is None or verify_password(password, user.password)
@@ -29,12 +29,12 @@ def login(username: str, password: str, db: Session = Depends(get_db)):
     )
 
 
-@auth_router.post("auth/logout")
+@auth_router.post("/auth/logout")
 def logout():
     pass
 
 
-@auth_router.post("auth/refresh")
+@auth_router.post("/auth/refresh")
 def refresh(refresh_token: str, db: Session = Depends(get_db)):
     user_id = verify_refresh_token(refresh_token)
 
