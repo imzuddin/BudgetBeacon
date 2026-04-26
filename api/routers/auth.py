@@ -45,7 +45,7 @@ def login(username: str, password: str, db: Session = Depends(get_db)):
     return jwt_token
 
 
-@auth_router.post("/auth/logout")
+@auth_router.post("/auth/logout", status_code=204)
 def logout(refresh_token: str, db: Session = Depends(get_db)):
 
     try:

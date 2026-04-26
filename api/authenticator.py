@@ -52,13 +52,13 @@ def _create_token(user_id: int, token_type: str, expires_delta: timedelta) -> st
     )
 
 
-def create_access_token(user_id: int):
+def create_access_token(user_id: int) -> str: 
     return _create_token(
         user_id, "access", timedelta(minutes=settings.access_token_expires_minutes)
     )
 
 
-def create_refresh_token(user_id: int):
+def create_refresh_token(user_id: int) -> str:
     return _create_token(
         user_id, "refresh", timedelta(minutes=settings.refresh_token_expires_days)
     )
@@ -107,7 +107,7 @@ def verify_access_token(user_id: str, access_token: str) -> int:
     if token_user_id is None:
         raise InvalidTokenError("Missing Token Subject")
 
-    if token_user_id != user_id:
+    if token_user_id != str(user_id):
         raise InvalidTokenError("Access Token Does Not Match Account")
 
     try:
