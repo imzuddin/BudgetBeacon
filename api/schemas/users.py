@@ -1,6 +1,13 @@
 from datetime import datetime
+from enum import StrEnum
 
 from pydantic import BaseModel, ConfigDict, Field
+
+
+class UserRole(StrEnum):
+    USER = "user"
+    ADMIN = "admin"
+    OPS = "ops"
 
 
 class UserCreate(BaseModel):
@@ -17,4 +24,5 @@ class UserRead(BaseModel):
     first_name: str
     last_name: str | None
     username: str
+    role: str
     created_at: datetime

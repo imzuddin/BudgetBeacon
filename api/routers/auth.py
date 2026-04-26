@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from api.authenticator import (InvalidTokenError, create_access_token,
-                               create_refresh_token, get_refresh_token_expiry,
+                               create_refresh_token, get_token_expiry,
                                hash_refresh_token, verify_password,
                                verify_refresh_token)
 from api.db_connecter import get_db
@@ -34,7 +34,7 @@ def login(username: str, password: str, db: Session = Depends(get_db)):
     refresh_token_entry = RefreshToken(
         user_id=user.id,
         token_hash=hash_refresh_token(jwt_token.refresh_token),
-        expires_at=get_refresh_token_expiry(jwt_token.refresh_token),
+        expires_at=get_token_expiry(jwt_token.refresh_token),
         revoked_at=None,
     )
 
@@ -91,7 +91,7 @@ def refresh(refresh_token: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Refresh Token already Used")
 
     expires_at = old_token.expires_at
-    
+
     if expires_at.tzinfo is None:
         expires_at = expires_at.replace(tzinfo=timezone.utc)
 
@@ -111,7 +111,7 @@ def refresh(refresh_token: str, db: Session = Depends(get_db)):
         RefreshToken(
             user_id=user.id,
             token_hash=hash_refresh_token(new_refresh_token),
-            expires_at=get_refresh_token_expiry(new_refresh_token),
+            expires_at=get_token_expiry(new_refresh_token),
         )
     )
 
