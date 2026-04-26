@@ -25,13 +25,16 @@ def hash_password(password: str) -> str:
 
 
 def hash_refresh_token(refresh_token: str) -> str:
-    peppered_refresh_token = _pepper_password(refresh_token)
-    return bcrypt.hashpw(peppered_refresh_token, bcrypt.gensalt()).decode("utf-8")
+    return hmac.digest(
+        settings.pepper_string.encode("utf-8"),
+        refresh_token.encode("utf-8"),
+        "sha256",
+    ).hex()
 
 
-def verify_password(password: str, password_hash: str) -> str:
-    _pepper_password = _pepper_password(password)
-    return bcrypt.checkpw(_pepper_password, password_hash.encode("utf-8"))
+def verify_password(password: str, password_hash: str) -> bool:
+    peppered_password = _pepper_password(password)
+    return bcrypt.checkpw(peppered_password, password_hash.encode("utf-8"))
 
 
 def _create_token(user_id: int, token_type: str, expires_delta: timedelta) -> str:
@@ -61,7 +64,7 @@ def create_refresh_token(user_id: int):
     )
 
 
-def verify_refresh_token(refresh_token: str) -> str:
+def verify_refresh_token(refresh_token: str) -> int:
     try:
         payload = jwt.decode(
             refresh_token,
@@ -85,8 +88,7 @@ def verify_refresh_token(refresh_token: str) -> str:
     except ValueError as e:
         raise InvalidTokenError("Invalid Token Subject") from e
 
-
-def verify_access_token(user_id: str, access_token: str) -> str:
+def verify_access_token(user_id: str, access_token: str) -> int:
     try:
         payload = jwt.decode(
             access_token,
@@ -95,7 +97,7 @@ def verify_access_token(user_id: str, access_token: str) -> str:
         )
 
     except jwt.PyJWTError as e:
-        raise InvalidTokenError("Invalid Refresh Token") from e
+        raise InvalidTokenError("Invalid Access Token") from e
 
     if payload.get("type") != "access":
         raise InvalidTokenError("Invalid Token Type")

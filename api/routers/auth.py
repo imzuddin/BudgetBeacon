@@ -6,14 +6,12 @@ from sqlalchemy.orm import Session
 
 from api.authenticator import (InvalidTokenError, create_access_token,
                                create_refresh_token, get_refresh_token_expiry,
-                               hash_password, hash_refresh_token,
-                               verify_access_token, verify_password,
+                               hash_refresh_token, verify_password,
                                verify_refresh_token)
 from api.db_connecter import get_db
 from api.models.auth import RefreshToken
 from api.models.user import User
 from api.schemas.auth import AccessToken
-from api.schemas.users import UserRead
 
 auth_router = APIRouter()
 
@@ -22,8 +20,8 @@ auth_router = APIRouter()
 def login(username: str, password: str, db: Session = Depends(get_db)):
     user = db.scalar(select(User).where(User.username == username))
 
-    if user is None and (
-        user.password_hash is None or verify_password(password, user.password_hash)
+    if user is None or (
+        user.password_hash is None or not verify_password(password, user.password_hash)
     ):
         raise HTTPException(status_code=401, detail="Username or Password is Incorrect")
 
@@ -35,14 +33,14 @@ def login(username: str, password: str, db: Session = Depends(get_db)):
 
     refresh_token_entry = RefreshToken(
         user_id=user.id,
-        token_hash=hash_password(jwt_token.refresh_token),
+        token_hash=hash_refresh_token(jwt_token.refresh_token),
         expires_at=get_refresh_token_expiry(jwt_token.refresh_token),
         revoked_at=None,
     )
 
     db.add(refresh_token_entry)
     db.commit()
-    db.refresh()
+    db.refresh(refresh_token_entry)
 
     return jwt_token
 
@@ -64,7 +62,7 @@ def logout(refresh_token: str, db: Session = Depends(get_db)):
     if db_refresh_token is None:
         raise HTTPException(status_code=401, detail="Invalid Refresh Token")
 
-    if db_refresh_token.revoked_at != None:
+    if db_refresh_token.revoked_at is not None:
         raise HTTPException(status_code=401, detail="Token Expired")
 
     db_refresh_token.revoked_at = datetime.now(timezone.utc)
@@ -96,6 +94,9 @@ def refresh(refresh_token: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="Refresh Token Expired")
 
     user = db.scalar(select(User).where(User.id == user_id))
+
+    if user is None:
+        raise HTTPException(status_code=401, detail="Invalid Refresh Token")
 
     old_token.revoked_at = now
 

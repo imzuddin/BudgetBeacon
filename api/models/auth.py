@@ -22,7 +22,7 @@ class RefreshToken(Base):
         DateTime(timezone=True),
         nullable=False,
     )
-    revoked_at: Mapped[datetime] = mapped_column(
+    revoked_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         nullable=True,
     )
