@@ -23,9 +23,11 @@ def get_user(
 
     return user
 
+
 @users_router.get("/users/me", response_model=UserRead)
 def read_current_user(current_user: User = Depends(get_current_user)):
     return current_user
+
 
 @users_router.get("/users", response_model=list[UserRead])
 def get_all_users(
@@ -34,6 +36,7 @@ def get_all_users(
     users = db.scalars(select(User).order_by(User.created_at)).all()
 
     return users
+
 
 @users_router.post("/user", response_model=UserRead)
 def create_user(user_input: UserCreate, db: Session = Depends(get_db)):
@@ -73,6 +76,3 @@ def delete_user_by_id(
 
     db.delete(user)
     db.commit()
-
-
-
