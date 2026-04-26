@@ -90,7 +90,12 @@ def refresh(refresh_token: str, db: Session = Depends(get_db)):
     if old_token.revoked_at is not None:
         raise HTTPException(status_code=401, detail="Refresh Token already Used")
 
-    if old_token.expires_at <= now:
+    expires_at = old_token.expires_at
+    
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+
+    if expires_at <= now:
         raise HTTPException(status_code=401, detail="Refresh Token Expired")
 
     user = db.scalar(select(User).where(User.id == user_id))
