@@ -24,6 +24,11 @@ def hash_password(password: str) -> str:
     return bcrypt.hashpw(peppered_password, bcrypt.gensalt()).decode("utf-8")
 
 
+def hash_refresh_token(refresh_token: str) -> str:
+    peppered_refresh_token = _pepper_password(refresh_token)
+    return bcrypt.hashpw(peppered_refresh_token, bcrypt.gensalt()).decode("utf-8")
+
+
 def verify_password(password: str, password_hash: str) -> str:
     _pepper_password = _pepper_password(password)
     return bcrypt.checkpw(_pepper_password, password_hash.encode("utf-8"))
@@ -79,3 +84,45 @@ def verify_refresh_token(refresh_token: str) -> str:
         return int(user_id)
     except ValueError as e:
         raise InvalidTokenError("Invalid Token Subject") from e
+
+
+def verify_access_token(user_id: str, access_token: str) -> str:
+    try:
+        payload = jwt.decode(
+            access_token,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+        )
+
+    except jwt.PyJWTError as e:
+        raise InvalidTokenError("Invalid Refresh Token") from e
+
+    if payload.get("type") != "access":
+        raise InvalidTokenError("Invalid Token Type")
+
+    token_user_id = payload.get("sub")
+
+    if token_user_id is None:
+        raise InvalidTokenError("Missing Token Subject")
+
+    if token_user_id != user_id:
+        raise InvalidTokenError("Access Token Does Not Match Account")
+
+    try:
+        return int(user_id)
+    except ValueError as e:
+        raise InvalidTokenError("Invalid Token Subject") from e
+
+
+def get_refresh_token_expiry(refresh_token: str) -> datetime:
+    payload = jwt.decode(
+        refresh_token,
+        settings.jwt_secret_key,
+        algorithms=[settings.jwt_algorithm],
+    )
+
+    if payload.get("type") != "refresh":
+        raise ValueError("Not a Refresh Token")
+
+    expiry = payload["exp"]
+    return datetime.fromtimestamp(expiry, tz=timezone.utc)
