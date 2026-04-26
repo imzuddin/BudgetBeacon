@@ -4,12 +4,6 @@ from enum import StrEnum
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class UserRole(StrEnum):
-    USER = "user"
-    ADMIN = "admin"
-    OPS = "ops"
-
-
 class UserCreate(BaseModel):
     first_name: str = Field(min_length=1, max_length=50)
     last_name: str | None = Field(default=None, max_length=50)
