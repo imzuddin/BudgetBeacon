@@ -4,10 +4,15 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from api.authenticator import (InvalidTokenError, create_access_token,
-                               create_refresh_token, get_token_expiry,
-                               hash_refresh_token, verify_password,
-                               verify_refresh_token)
+from api.authenticator import (
+    InvalidTokenError,
+    create_access_token,
+    create_refresh_token,
+    get_token_expiry,
+    hash_refresh_token,
+    verify_password,
+    verify_refresh_token,
+)
 from api.db_connecter import get_db
 from api.models.auth import RefreshToken
 from api.models.user import User
